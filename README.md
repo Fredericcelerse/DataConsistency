@@ -26,9 +26,9 @@ Once the environment is properly created, install the necessary Python libraries
 pip install scikit-learn numpy pandas scipy
 ```
 
-### Database
+### Databases
 
-In this project, we use two datasets available on Kaggle and stored here in the folder [databases](databases):   
+In this project, we use two databases available on Kaggle and stored here in the folder [databases](databases):   
    1. [drug200.csv](databases/drug200.csv): a datasets made of 200 lines, where depending onn several features a specific drug is assigned (A/B/C/X/Y). More informations are availble on the folling website: https://www.kaggle.com/datasets/pablomgomez21/drugs-a-b-c-x-y-for-decision-trees/data. Furthermore, we also recently dedicated a ML project which is now released on GitHub at this adress: https://github.com/Fredericcelerse/DrugClassification/tree/main   
    2. [lung_cancer.csv](databases/lung_cancer.csv): This new database, released few weeks ago on Kaggle (https://www.kaggle.com/datasets/akashnath29/lung-cancer-dataset) consists of 3000 lines, where depending on the features we say if YES or NO the patient has a lung cancer.
 
