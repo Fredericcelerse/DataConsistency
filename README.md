@@ -145,8 +145,63 @@ X_cancer_preprocessed = preprocess_data(X_cancer)
 
 ### 3. Measure the possible correlations
 
+The data being pre-processed, we can now start the measure of possible correlations between the features and the corresponded targets. To do this task, we first create new features that are based on combinations between the pre-existed features:
 
+```python
+# In order to visualize how the features can correlate well with the target, 
+# we create interactions between the features and then we apply non-linear
+# tranformations
+from sklearn.preprocessing import PolynomialFeatures
+
+def create_features(X):
+    poly = PolynomialFeatures(degree=4, interaction_only=False, include_bias=False)
+    X_poly = poly.fit_transform(X)
+    return pd.DataFrame(X_poly, columns=poly.get_feature_names_out(X.columns))
+
+X_drug_enhanced = create_features(X_drug_preprocessed)
+X_cancer_enhanced = create_features(X_cancer_preprocessed)
+```
+
+Importantly, here we decided to use "degree=4" in the "PolynomialFeatures" function. This is purely an empirical choice and the user is free to use either less complex (degree=3) or more complex (degree=5) combinations between the features.    
+
+Once the new features are created and  stored in "X_drug_enhanced" and "X_cancer_enhanced", we can use the Pearson correlation method to evaluate the possible correlations between these new features and the corresponded targets:
+```python
+# Once the new correlated features are created, we can calculate the correlation
+# using the Pearson Correlation method 
+from scipy.stats import pearsonr
+
+def calculate_correlations(X, y):
+    correlations = {}
+    for col in X.columns:
+        corr, _ = pearsonr(X[col], y)
+        correlations[col] = abs(corr)
+    return correlations
+
+correlations_drug_enhanced = calculate_correlations(X_drug_enhanced, y_drug)
+```
 
 ### 4. Interpret the results
+
+Finally we can print the results:
+```python
+print("Correlations with the target -> drug200.csv:")
+print(sorted(correlations_drug_enhanced.items(), key=lambda item: item[1], reverse=True)[:5])  # Print only the 5 best correlations
+
+correlations_cancer_enhanced = calculate_correlations(X_cancer_enhanced, y_cancer)
+print("Correlations with the target -> dataset.csv:")
+print(sorted(correlations_cancer_enhanced.items(), key=lambda item: item[1], reverse=True)[:5]) # Print only the 5 best correlations
+```
+
+and we should observe this on our screen:
+```
+Correlations with the target -> drug200.csv:
+[('Na_to_K', 0.5891198660590571), ('Na_to_K^2', 0.5293393240544266), ('Age Na_to_K^2', 0.47156637415498887), ('BP Na_to_K', 0.46774484303852415), ('Na_to_K^3', 0.45736262390586513)]
+Correlations with the target -> dataset.csv:
+[('AGE^2 CHRONIC_DISEASE WHEEZING', 0.05834562878524951), ('AGE PEER_PRESSURE WHEEZING CHEST_PAIN', 0.056746749185962), ('AGE CHRONIC_DISEASE WHEEZING CHEST_PAIN', 0.056429262998627674), ('AGE PEER_PRESSURE WHEEZING ALCOHOL_CONSUMING', 0.05616977449562988), ('AGE WHEEZING^2 CHEST_PAIN', 0.05579777889721853)]
+```
+
+***How to interpret these results ?***
+
+
 
 
