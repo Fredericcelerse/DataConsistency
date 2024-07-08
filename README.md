@@ -1,4 +1,6 @@
 # DataConsistency
+![Alt text](Data_consistency_in_AI.png)
+
 This introductory project demonstrates the importance of verifying data consistency prior to using any ML approach.   
 
 In this example, we show how to measure possible correlations between the features of the dataset and the corresponding targets.
