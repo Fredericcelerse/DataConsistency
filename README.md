@@ -1,7 +1,7 @@
 # DataConsistency
-This introductory project demonstrates the importance of verifying the data consistency prio to use any ML approach.
+This introductory project demonstrates the importance of verifying data consistency prior to using any ML approach.   
 
-In this example, we show how to measure possible correlations between the features of the dataset and the corresponded targets. 
+In this example, we show how to measure possible correlations between the features of the dataset and the corresponding targets.
 
 ## Prerequisites
 
@@ -29,25 +29,25 @@ pip install scikit-learn numpy pandas scipy
 ### Databases
 
 In this project, we use two databases available on Kaggle and stored here in the folder [databases](databases):   
-   1. [drug200.csv](databases/drug200.csv): a datasets made of 200 lines, where depending onn several features a specific drug is assigned (A/B/C/X/Y). More informations are availble on the folling website: https://www.kaggle.com/datasets/pablomgomez21/drugs-a-b-c-x-y-for-decision-trees/data. Furthermore, we also recently dedicated a ML project which is now released on GitHub at this adress: https://github.com/Fredericcelerse/DrugClassification/tree/main   
-   2. [lung_cancer.csv](databases/lung_cancer.csv): This new database, released few weeks ago on Kaggle (https://www.kaggle.com/datasets/akashnath29/lung-cancer-dataset) consists of 3000 lines, where depending on the features we say if YES or NO the patient has a lung cancer.
+   1. [drug200.csv](databases/drug200.csv): a dataset made of 200 lines, where depending on several features a specific drug is assigned (A/B/C/X/Y). More information is available on the following website: https://www.kaggle.com/datasets/pablomgomez21/drugs-a-b-c-x-y-for-decision-trees/data. Furthermore, we also recently dedicated an ML project which is now released on GitHub at this address: https://github.com/Fredericcelerse/DrugClassification/tree/main    
+   2. [lung_cancer.csv](databases/lung_cancer.csv): This new database, released a few weeks ago on Kaggle (https://www.kaggle.com/datasets/akashnath29/lung-cancer-dataset) consists of 3000 lines, where depending on the features we say if YES or NO the patient has lung cancer.   
 
 ## Initial goal of the project
 
-The initial goal of this project was to build a ML model, very similar to what we made before for the "DrugClassification" project (https://github.com/Fredericcelerse/DrugClassification/tree/main), and where a patient could  evaluate the risk to have a lung cancer based on his symptomas.
+The initial goal of this project was to build an ML model, very similar to what we did before for the "DrugClassification" project (https://github.com/Fredericcelerse/DrugClassification/tree/main), where a patient could evaluate the risk of having lung cancer based on his symptoms.   
 
-However, every models we used only provided accuracy not higher than 54.5%, showing very randomicity in our predictions. On Kaggle, similar projects also demonstrate the same accuracy by employing several other methods. It finally shows that the data cannot be used accurately to build a ML model.
+However, every model we used only provided accuracy not higher than 54.5%, showing very random results in our predictions. On Kaggle, similar projects also demonstrate the same accuracy by employing several other methods. It finally shows that the data cannot be used accurately to build an ML model.   
 
-But instead of just concluding on that, I would like to show ***why it is so problematic in that case to build a ML model***. This is why we dedicate this project in building a small but efficient pipeline which can afford simply explanations on this issue.
+But instead of just concluding on that, I would like to show ***why it is so problematic in this case to build an ML model***. This is why we dedicate this project to building a small but efficient pipeline which can provide simple explanations on this issue.
 
 ## Project architecture
 
 This project is made of one script labeled [data_consistency.py](data_consistency.py) and consists of four main tasks:
 
-***1. Load the datasets***   
-***2. Pre-treat the data***   
-***3. Measure the possible correlations***   
-***4. Interpret the results***
+[***1. Load the datasets***](#1-load-the-datasets)  
+[***2. Pre-treat the data***](#2-pre-treat-the-data)  
+[***3. Measure the possible correlations***](#3-measure-the-possible-correlations)  
+[***4. Interpret the results***](#4-interpret-the-results)  
 
 Let us see in more details these four aspects
 
@@ -113,7 +113,7 @@ Thus, we see that the data are loaded correctly !
 
 ### 2. Pre-treat the data
 
-Before manipulating them, the data have to be first converted. We first converted the targets into binaries:
+Before manipulating them, the data have to be first converted. We first converted the targets into binaries:   
 
 ```python
 # We convert the target into binaries
@@ -145,7 +145,7 @@ X_cancer_preprocessed = preprocess_data(X_cancer)
 
 ### 3. Measure the possible correlations
 
-The data being pre-processed, we can now start the measure of possible correlations between the features and the corresponded targets. To do this task, we first create new features that are based on combinations between the pre-existed features:
+The data being pre-processed, we can now start the measure of possible correlations between the features and the corresponding targets. To do this task, we first create new features that are based on combinations between the pre-existing features:
 
 ```python
 # In order to visualize how the features can correlate well with the target, 
@@ -162,9 +162,9 @@ X_drug_enhanced = create_features(X_drug_preprocessed)
 X_cancer_enhanced = create_features(X_cancer_preprocessed)
 ```
 
-Importantly, here we decided to use "degree=4" in the "PolynomialFeatures" function. This is purely an empirical choice and the user is free to use either less complex (degree=3) or more complex (degree=5) combinations between the features.    
+Importantly, here we decided to use "degree=4" in the "PolynomialFeatures" function. This is purely an empirical choice and the user is free to use either less complex (degree=3) or more complex (degree=5) combinations between the features.   
 
-Once the new features are created and  stored in "X_drug_enhanced" and "X_cancer_enhanced", we can use the Pearson correlation method to evaluate the possible correlations between these new features and the corresponded targets:
+Once the new features are created and stored in "X_drug_enhanced" and "X_cancer_enhanced", we can use the Pearson correlation method to evaluate the possible correlations between these new features and the corresponding targets:   
 ```python
 # Once the new correlated features are created, we can calculate the correlation
 # using the Pearson Correlation method 
@@ -202,15 +202,15 @@ Correlations with the target -> dataset.csv:
 
 ***How to interpret these results ?***
 
-The results here show the five best correlations for each of the database. The coefficient is encompassed between -1 and 1, with 0 meaning that no correlations can be found. More informations about this method can be found here: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html
+The results here show the five best correlations for each of the databases. The coefficient is encompassed between -1 and 1, with 0 meaning that no correlations can be found. More information about this method can be found here: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html
 
-The main remark here is that the features present in drug200.csv show good correlations with their corresponded targets, with the features "Na_to_K", "Age" and "BP" being tthe most prominent one. It thus explains why building classification models with these data was feasible in our previous project.    
+The main remark here is that the features present in drug200.csv show good correlations with their corresponding targets, with the features "Na_to_K", "Age" and "BP" being the most prominent ones. It thus explains why building classification models with these data was feasible in our previous project.   
 
-However, the correlations for features present in lung_cancer.csv show very bad correlations, with the maximum being less than 0.06. It demonstrates that if we try to build a ML model on these data, the prediction would be random as the model will be not able to learn based on these features.   
+However, the correlations for features present in lung_cancer.csv show very bad correlations, with the maximum being less than 0.06. It demonstrates that if we try to build an ML model on these data, the prediction would be random as the model will not be able to learn based on these features.   
 
 ***What do do next ?***
 
-With these results, the owners of the database [lung_cancer.csv](databases/lung_cancer.csv) should revised their features and create new more relevant features that would be more suitable for next generation of ML-based models in the future. Furthermore, this simple but efficient approach is crucial to predict the potent efficiency of any ML model which would be trained on data. 
+With these results, the owners of the database [lung_cancer.csv](databases/lung_cancer.csv) should revised their features and create new more relevant features that would be more suitable for next generation of ML-based models in the future. Furthermore, this simple but efficient approach is crucial to predict the potential efficiency of any ML model which would be trained on data. 
 
 ### Code and jupyter notebook available
 
@@ -218,6 +218,4 @@ The full code is available here: [data_consistency.py](data_consistency.py).
 
 The jupyter notebook released on Kaggle is available here: https://www.kaggle.com/code/celerse/data-consistency
 
-If you have any comment, remark or question, do not hesitate to let a comment or to contact me directly, I would be happy to discuss on it directly with you !
-
-
+If you have any comments, remarks, or questions, do not hesitate to leave a comment or to contact me directly. I would be happy to discuss it directly with you !
