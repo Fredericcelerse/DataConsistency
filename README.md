@@ -212,7 +212,7 @@ However, the correlations for features present in lung_cancer.csv show very bad 
 
 With these results, the owners of the database [lung_cancer.csv](databases/lung_cancer.csv) should revised their features and create new more relevant features that would be more suitable for next generation of ML-based models in the future. Furthermore, this simple but efficient approach is crucial to predict the potential efficiency of any ML model which would be trained on data. 
 
-### Code and jupyter notebook available
+## Code and jupyter notebook available
 
 The full code is available here: [data_consistency.py](data_consistency.py).   
 
