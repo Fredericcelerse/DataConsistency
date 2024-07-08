@@ -28,9 +28,9 @@ pip install scikit-learn numpy pandas scipy
 
 ### Database
 
-In this project, we use two datasets available on Kaggle and stored here in the folder [datasets](datasets):   
-   1. [drug200.csv](datasets/drug200.csv): a datasets made of 200 lines, where depending onn several features a specific drug is assigned (A/B/C/X/Y). More informations are availble on the folling website: https://www.kaggle.com/datasets/pablomgomez21/drugs-a-b-c-x-y-for-decision-trees/data. Furthermore, we also recently dedicated a ML project which is now released on GitHub at this adress: https://github.com/Fredericcelerse/DrugClassification/tree/main   
-   2. [lung_cancer.csv](datasets/lung_cancer.csv): This new database, released few weeks ago on Kaggle (https://www.kaggle.com/datasets/akashnath29/lung-cancer-dataset) consists of 3000 lines, where depending on the features we say if YES or NO the patient has a lung cancer.
+In this project, we use two datasets available on Kaggle and stored here in the folder [databases](databases):   
+   1. [drug200.csv](databases/drug200.csv): a datasets made of 200 lines, where depending onn several features a specific drug is assigned (A/B/C/X/Y). More informations are availble on the folling website: https://www.kaggle.com/datasets/pablomgomez21/drugs-a-b-c-x-y-for-decision-trees/data. Furthermore, we also recently dedicated a ML project which is now released on GitHub at this adress: https://github.com/Fredericcelerse/DrugClassification/tree/main   
+   2. [lung_cancer.csv](databases/lung_cancer.csv): This new database, released few weeks ago on Kaggle (https://www.kaggle.com/datasets/akashnath29/lung-cancer-dataset) consists of 3000 lines, where depending on the features we say if YES or NO the patient has a lung cancer.
 
 ## Initial goal of the project
 
@@ -42,13 +42,14 @@ But instead of just concluding on that, I would like to show ***why it is so pro
 
 ## Project architecture
 
-This project is made of one script labeled [data_consistency.py](data_consistency.py) and consists of three main tasks:
+This project is made of one script labeled [data_consistency.py](data_consistency.py) and consists of four main tasks:
 
 ***1. Load the datasets***   
-***2. Measure the possible correlations***
-***3. Interpret the results***
+***2. Pre-treat the data***   
+***3. Measure the possible correlations***   
+***4. Interpret the results***
 
-Let us see in more details these three aspects
+Let us see in more details these four aspects
 
 ### 1. Load the datasets
 
@@ -108,7 +109,39 @@ On your screen, you should then see:
 4                    1                      1           2          NO  
 ```
 
+Thus, we see that the data are loaded correctly !
+
 ### 2. Pre-treat the data
+
+Before manipulating them, the data have to be first converted. We first converted the targets into binaries:
+
+```python
+# We convert the target into binaries
+from sklearn.preprocessing import LabelEncoder
+
+label_encoder_drug = LabelEncoder()
+y_drug = label_encoder_drug.fit_transform(y_drug)
+
+label_encoder_cancer = LabelEncoder()
+y_cancer = label_encoder_cancer.fit_transform(y_cancer)
+```
+
+and then the features:
+```python
+# We pre-treat the features before using them
+
+def preprocess_data(X):
+    X = X.copy()
+    for col in X.select_dtypes(include=['object']).columns:
+        X[col] = X[col].fillna('missing')
+        X[col] = LabelEncoder().fit_transform(X[col])
+    for col in X.select_dtypes(include=['float64', 'int64']).columns:
+        X[col] = X[col].fillna(X[col].median())
+    return X
+
+X_drug_preprocessed = preprocess_data(X_drug)
+X_cancer_preprocessed = preprocess_data(X_cancer)
+```
 
 ### 3. Measure the possible correlations
 
