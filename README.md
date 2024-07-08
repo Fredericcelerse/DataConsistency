@@ -3,6 +3,19 @@ This introductory project demonstrates the importance of verifying data consiste
 
 In this example, we show how to measure possible correlations between the features of the dataset and the corresponding targets.
 
+## Table of Contents
+- [Prerequisites](#prerequisites)
+  - [Anaconda](#anaconda)
+  - [Setup conda environment](#setup-conda-environment)
+  - [Databases](#databases)
+- [Initial goal of the project](#initial-goal-of-the-project)
+- [Project architecture](#project-architecture)
+  - [1. Load the datasets](#1-load-the-datasets)
+  - [2. Pre-treat the data](#2-pre-treat-the-data)
+  - [3. Measure the possible correlations](#3-measure-the-possible-correlations)
+  - [4. Interpret the results](#4-interpret-the-results)
+- [Code and Jupyter notebook available](#code-and-jupyter-notebook-available)
+
 ## Prerequisites
 
 ### Anaconda
