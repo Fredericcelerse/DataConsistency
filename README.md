@@ -202,6 +202,22 @@ Correlations with the target -> dataset.csv:
 
 ***How to interpret these results ?***
 
+The results here show the five best correlations for each of the database. The coefficient is encompassed between -1 and 1, with 0 meaning that no correlations can be found. More informations about this method can be found here: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html
 
+The main remark here is that the features present in drug200.csv show good correlations with their corresponded targets, with the features "Na_to_K", "Age" and "BP" being tthe most prominent one. It thus explains why building classification models with these data was feasible in our previous project.    
+
+However, the correlations for features present in lung_cancer.csv show very bad correlations, with the maximum being less than 0.06. It demonstrates that if we try to build a ML model on these data, the prediction would be random as the model will be not able to learn based on these features.   
+
+***What do do next ?***
+
+With these results, the owners of the database [lung_cancer.csv](databases/lung_cancer.csv) should revised their features and create new more relevant features that would be more suitable for next generation of ML-based models in the future. Furthermore, this simple but efficient approach is crucial to predict the potent efficiency of any ML model which would be trained on data. 
+
+### Code and jupyter notebook available
+
+The full code is available here: [data_consistency.py](data_consistency.py).   
+
+The jupyter notebook released on Kaggle is available here: https://www.kaggle.com/code/celerse/data-consistency
+
+If you have any comment, remark or question, do not hesitate to let a comment or to contact me directly, I would be happy to discuss on it directly with you !
 
 
