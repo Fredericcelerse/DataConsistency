@@ -424,8 +424,6 @@ Now we saw that one of the best result could be obtained with our 4 best combine
 
 ## Code and jupyter notebook available
 
-The full code is available here: https://github.com/Fredericcelerse/DataConsistency/tree/Breast_cancer_data    
-
 The jupyter notebook released on Kaggle is available here: XXX
 
 If you have any comments, remarks, or questions, do not hesitate to leave a comment or to contact me directly. I would be happy to discuss it directly with you !
