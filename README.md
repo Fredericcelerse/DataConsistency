@@ -52,6 +52,7 @@ In the [MyPythonFunctions.py](MyPythonFunctions.py), we store all the functions 
    ***create_features***: Function to create interactions between the features and apply the non-linear transformations   
    ***calculate_correlations***: Function to compute the correlations between the new features and the corresponded target   
    ***visualize_top_features***: Function to visualize the best features
+   ***train_RF***: Function to train a Random Forest classification algorithm
 
 ### 2. Isolate the best features without any combinations
 
@@ -218,6 +219,9 @@ We first load the dataset, preprocess the data and create the combined features.
 
 import pandas as pd
 import time
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import classification_report, accuracy_score, roc_auc_score
 
 # We import here our mad-home libraries
 from MyPythonFunctions import (
@@ -225,7 +229,8 @@ from MyPythonFunctions import (
     display_dataset_info,
     check_data_loaded,
     preprocess_data,
-    create_features
+    create_features,
+    train_RF
 )
 
 # 1/ Load and pre-treat the dataset
@@ -239,7 +244,7 @@ top_features_names_breast_cancer = [
     'worst concave points',
     'worst perimeter',
     'mean concave points',
-   ' worst radius',
+    'worst radius',
     'mean perimeter',
     'worst area',
     'mean radius',
@@ -250,27 +255,154 @@ top_features_names_breast_cancer = [
 
 # 3/ And now the top 10 features we identified previously with combinations
 top_combined_features_names_breast_cancer = [
-    worst perimeter worst smoothness',
-    worst radius worst smoothness',
-    worst texture worst concave points',
-    mean texture worst concave points',
-    worst radius worst concave points',
-    mean radius worst texture worst concave points',
-    mean radius worst concave points',
-    mean concave points worst texture',
-    mean perimeter worst texture worst concave points',
-    mean perimeter worst smoothness'
+    'worst perimeter worst smoothness',
+    'worst radius worst smoothness',
+    'worst texture worst concave points',
+    'mean texture worst concave points',
+    'worst radius worst concave points',
+    'mean radius worst texture worst concave points',
+    'mean radius worst concave points',
+    'mean concave points worst texture',
+    'mean perimeter worst texture worst concave points',
+    'mean perimeter worst smoothness'
 ]
 
 # 4/ We create the same new features as before
-X_breast_cancer_enhanced = create_features(X_breast_cancer_preprocessed)
+X_breast_cancer_enhanced1 = create_features(X_breast_cancer_preprocessed, combination=1)
+X_breast_cancer_enhanced2 = create_features(X_breast_cancer_preprocessed, combination=4)
 
 # 5/ We extract the best features
-X_breast_cancer_selected1 = X_breast_cancer_enhanced[top_features_names_breast_cancer]
-X_breast_cancer_selected2 = X_breast_cancer_enhanced[top_combined_features_names_breast_cancer]
+X_breast_cancer_selected1 = X_breast_cancer_enhanced1[top_features_names_breast_cancer]
+X_breast_cancer_selected2 = X_breast_cancer_enhanced2[top_combined_features_names_breast_cancer]
 ```
 
 We then build the RF models and launch the different training and measured the time. 
+
+```python
+# 6/ Now, we build our ML model
+# => We train a classical Random Forest model only with the best non-combined features
+feature_counts = list(range(1, X_breast_cancer_selected1.shape[1] + 1, 1))
+training_times1 = []
+accuracies1 = []
+for i, count in enumerate(feature_counts):
+
+    X_subset = X_breast_cancer_selected1.iloc[:, :count]
+    X_train, X_test, y_train, y_test = train_test_split(X_subset, y_breast_cancer, test_size=0.2, random_state=42)
+
+    t, acc = train_RF(X_train, X_test, y_train, y_test)
+
+    training_times1.append(t)
+    accuracies1.append(acc)
+
+    print("{}/{} done !".format(i+1,len(feature_counts)))
+    time.sleep(1)
+
+# => we print the training time and accuracy for each of these trainings
+print("\nCASE1: THE BEST NON_COMBINED FEATURES\n")
+for i, j in enumerate(training_times1):
+    print("Number of features: {} --- Training time: {} --- Accuracy: {}".format(i+1, j, accuracies1[i]))
+```
+
+and we do the same for the other models:
+
+```python
+# => Finally, we repeat the process for the other cases
+# CASE 2: All the non-combined data
+X_train, X_test, y_train, y_test = train_test_split(X_breast_cancer_preprocessed, y_breast_cancer, test_size=0.2, random_state=42)
+
+t, acc = train_RF(X_train, X_test, y_train, y_test)
+
+print("\nCASE2: THE BEST NON_COMBINED FEATURES\n")
+print("Number of features: {} --- Training time: {} --- Accuracy: {}".format(len(X_breast_cancer_enhanced1), t, acc))
+
+# CASE 3: The 10 best combined features
+training_times1 = []
+accuracies1 = []
+for i, count in enumerate(feature_counts):
+
+    X_subset = X_breast_cancer_selected2.iloc[:, :count]
+    X_train, X_test, y_train, y_test = train_test_split(X_subset, y_breast_cancer, test_size=0.2, random_state=42)
+
+    t, acc = train_RF(X_train, X_test, y_train, y_test)
+
+    training_times1.append(t)
+    accuracies1.append(acc)
+
+    print("{}/{} done !".format(i+1,len(feature_counts)))
+    time.sleep(1)
+
+# => we print the training time and accuracy for each of these trainings
+print("\nCASE3: THE BEST NON_COMBINED FEATURES\n")
+for i, j in enumerate(training_times1):
+    print("Number of features: {} --- Training time: {} --- Accuracy: {}".format(i+1, j, accuracies1[i]))
+
+# CASE 4: All the combined features
+X_train, X_test, y_train, y_test = train_test_split(X_breast_cancer_enhanced2, y_breast_cancer, test_size=0.2, random_state=42)
+
+t, acc = train_RF(X_train, X_test, y_train, y_test)
+
+print("\nCASE4: THE BEST NON_COMBINED FEATURES\n")
+print("Number of features: {} --- Training time: {} --- Accuracy: {}".format(len(X_breast_cancer_enhanced2), t, acc))
+```
+
+You should observe on your screen the following results:
+```
+Breast Cancer Dataset loaded successfully.
+1/10 done !
+2/10 done !
+3/10 done !
+4/10 done !
+5/10 done !
+6/10 done !
+7/10 done !
+8/10 done !
+9/10 done !
+10/10 done !
+
+CASE1: THE BEST NON_COMBINED FEATURES
+
+Number of features: 1 --- Training time: 0.18052911758422852 --- Accuracy: 0.9035087719298246
+Number of features: 2 --- Training time: 0.1452639102935791 --- Accuracy: 0.9385964912280702
+Number of features: 3 --- Training time: 0.1372699737548828 --- Accuracy: 0.9385964912280702
+Number of features: 4 --- Training time: 0.15772390365600586 --- Accuracy: 0.956140350877193
+Number of features: 5 --- Training time: 0.15401101112365723 --- Accuracy: 0.956140350877193
+Number of features: 6 --- Training time: 0.15012788772583008 --- Accuracy: 0.956140350877193
+Number of features: 7 --- Training time: 0.14864802360534668 --- Accuracy: 0.956140350877193
+Number of features: 8 --- Training time: 0.14806079864501953 --- Accuracy: 0.9649122807017544
+Number of features: 9 --- Training time: 0.16820979118347168 --- Accuracy: 0.956140350877193
+Number of features: 10 --- Training time: 0.16501927375793457 --- Accuracy: 0.956140350877193
+
+CASE2: THE BEST NON_COMBINED FEATURES
+
+Number of features: 569 --- Training time: 0.207841157913208 --- Accuracy: 0.9649122807017544
+1/10 done !
+2/10 done !
+3/10 done !
+4/10 done !
+5/10 done !
+6/10 done !
+7/10 done !
+8/10 done !
+9/10 done !
+10/10 done !
+
+CASE3: THE BEST NON_COMBINED FEATURES
+
+Number of features: 1 --- Training time: 0.13260984420776367 --- Accuracy: 0.9385964912280702
+Number of features: 2 --- Training time: 0.13120627403259277 --- Accuracy: 0.9649122807017544
+Number of features: 3 --- Training time: 0.13457822799682617 --- Accuracy: 0.9736842105263158
+Number of features: 4 --- Training time: 0.1491100788116455 --- Accuracy: 0.9736842105263158
+Number of features: 5 --- Training time: 0.14768600463867188 --- Accuracy: 0.956140350877193
+Number of features: 6 --- Training time: 0.1454331874847412 --- Accuracy: 0.956140350877193
+Number of features: 7 --- Training time: 0.15279293060302734 --- Accuracy: 0.956140350877193
+Number of features: 8 --- Training time: 0.14442920684814453 --- Accuracy: 0.9649122807017544
+Number of features: 9 --- Training time: 0.16461610794067383 --- Accuracy: 0.9649122807017544
+Number of features: 10 --- Training time: 0.15948224067687988 --- Accuracy: 0.9649122807017544
+
+CASE4: THE BEST NON_COMBINED FEATURES
+
+Number of features: 569 --- Training time: 3.3202831745147705 --- Accuracy: 0.9824561403508771
+```
 
 ### 5. Evaluate the optimization time
 
@@ -285,8 +417,8 @@ We then build the RF models and launch the different training and measured the t
 
 ## Code and jupyter notebook available
 
-The full code is available here:    
+The full code is available here:     
 
-The jupyter notebook released on Kaggle is available here: 
+The jupyter notebook released on Kaggle is available here: XXX
 
 If you have any comments, remarks, or questions, do not hesitate to leave a comment or to contact me directly. I would be happy to discuss it directly with you !
