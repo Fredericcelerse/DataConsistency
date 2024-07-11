@@ -1,16 +1,12 @@
-# DataConsistency
-![Alt text](Data_consistency_in_AI.png)
+# DataConsistency: Application 1
 
-This introductory project demonstrates the importance of verifying data consistency prior to using any ML approach.   
-
-In this example, we show how to measure possible correlations between the features of the dataset and the corresponding targets.
+In this branch, we will apply our approach on a specific dataset named "Breast Cancer Wisconsin (Diagnostic) Data Set".
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
-  - [Anaconda](#anaconda)
-  - [Setup conda environment](#setup-conda-environment)
+  - [Anaconda and conda environment](#anaconda-and-conda-environment)
   - [Databases](#databases)
-- [Initial goal of the project](#initial-goal-of-the-project)
+- [Goal of the project](#goal-of-the-project)
 - [Project architecture](#project-architecture)
   - [1. Load the datasets](#1-load-the-datasets)
   - [2. Pre-treat the data](#2-pre-treat-the-data)
@@ -20,53 +16,35 @@ In this example, we show how to measure possible correlations between the featur
 
 ## Prerequisites
 
-### Anaconda
+### Anaconda and conda environment
 
-To execute the code, we will set up a specific environment using Anaconda. To install it, visit [Anaconda Installation](https://docs.anaconda.com/free/anaconda/install/).
+It is the same prerequisites as the one specified in the main branch of this project.
 
-### Setup conda environment
+### Database
 
-First, create the conda environment:
-```
-conda create -n DataConsistency python=3.8
-```
+In this project, we use the database named "Breast Cancer Wisconsin (Diagnostic) Data Set", directly available within the scikit-learn library. However, for people who would like to take a look on its content, a version is available on the Kaggle website: https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data
 
-Then, activate the conda environment:
-```
-conda activate DataConsistency
-```
+## Goal of the project
 
-Once the environment is properly created, install the necessary Python libraries to execute the code:
-```
-pip install scikit-learn numpy pandas scipy
-```
-
-### Databases
-
-In this project, we use two databases available on Kaggle and stored here in the folder [databases](databases):   
-   1. [drug200.csv](databases/drug200.csv): a dataset made of 200 lines, where depending on several features a specific drug is assigned (A/B/C/X/Y). More information is available on the following website: https://www.kaggle.com/datasets/pablomgomez21/drugs-a-b-c-x-y-for-decision-trees/data. Furthermore, we also recently dedicated an ML project which is now released on GitHub at this address: https://github.com/Fredericcelerse/DrugClassification/tree/main    
-   2. [lung_cancer.csv](databases/lung_cancer.csv): This new database, released a few weeks ago on Kaggle (https://www.kaggle.com/datasets/akashnath29/lung-cancer-dataset) consists of 3000 lines, where depending on the features we say if YES or NO the patient has lung cancer.   
-
-## Initial goal of the project
-
-The initial goal of this project was to build an ML model, very similar to what we did before for the "DrugClassification" project (https://github.com/Fredericcelerse/DrugClassification/tree/main), where a patient could evaluate the risk of having lung cancer based on his symptoms.   
-
-However, every model we used only provided accuracy not higher than 54.5%, showing very random results in our predictions. On Kaggle, similar projects also demonstrate the same accuracy by employing several other methods. It finally shows that the data cannot be used accurately to build an ML model.   
-
-But instead of just concluding on that, I would like to show ***why it is so problematic in this case to build an ML model***. This is why we dedicate this project to building a small but efficient pipeline which can provide simple explanations on this issue.
+***The goal of the project is to show how we can gain both in time and efficency by isolating the best features from the dataset by using the methodology seen in the main branch.*** 
 
 ## Project architecture
 
-This project is made of one script labeled [data_consistency.py](data_consistency.py) and consists of four main tasks:
+This project is made of XXX scripts and consists of five main tasks:
 
-[***1. Load the datasets***](#1-load-the-datasets)  
-[***2. Pre-treat the data***](#2-pre-treat-the-data)  
-[***3. Measure the possible correlations***](#3-measure-the-possible-correlations)  
-[***4. Interpret the results***](#4-interpret-the-results)  
+[***1. The pre-defined functions***](#-the-pre-defined-functions)
+[***1. Isolate the best features without any combinations***](#1-isolate-the-best-features-without-any-combinations)  
+[***2. Isolate the best features with combinations***](#2-isolate-the-best-features-with-combinations)  
+[***3. Evaluate the training time in these conditions***](#3-evaluate-the-training-time-in-these-conditions)  
+[***4. Evaluate the optimization time***](#4-evaluate-the-optimization-time)  
 
-Let us see in more details these four aspects
+These four scripts will use several functions that we predifined in an external python file called [MyPythonFunctions.py](MyPythonFunctions.py)
 
-### 1. Load the datasets
+Let us see in more details these five aspects.
+
+### 0. The pre-defined functions
+
+### 1. Isolate the best features without any combinations
 
 The script starts by loading the two datasets:
 ```python
