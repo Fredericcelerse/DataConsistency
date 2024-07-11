@@ -200,7 +200,77 @@ Importantly, the choice to set the combination to 4 is purely empiric. However, 
 
 ### 4. Evaluate the training time
 
+Once we captured the best features (with and without combinations), it is interesting to see how it impacts the training of an ML model. In our case, we select the Random Forest (RF) model, but of course other type of classification models could be used in further studies. Here, we will focus to capture the evolution of the two main parameters, which are:
+- The training time as a function of the number of features
+- The accuracy as a function of the number of features
 
+To do this task, we will consider 3 subtasks:
+- An RF model trained only with the 10 best non-combined features
+- An RF model trained with the whole non-combined features
+- An RF model trained with the 10 best combined features
+- An RF model trained with the whole combined features
+
+To do this task, we resort to the script [2-Trained-RF-model.py](2-Trained-RF-model.py).   
+
+We first load the dataset, preprocess the data and create the combined features. 
+```python
+#!/usr/bin/env python
+
+import pandas as pd
+import time
+
+# We import here our mad-home libraries
+from MyPythonFunctions import (
+    load_breast_cancer_data,
+    display_dataset_info,
+    check_data_loaded,
+    preprocess_data,
+    create_features
+)
+
+# 1/ Load and pre-treat the dataset
+X_breast_cancer, y_breast_cancer = load_breast_cancer_data()
+display_dataset_info(X_breast_cancer, y_breast_cancer, "Breast Cancer Dataset")
+check_data_loaded(X_breast_cancer, y_breast_cancer, "Breast Cancer Dataset")
+X_breast_cancer_preprocessed = preprocess_data(X_breast_cancer)
+
+# 2/ We list here the top 10 features we identified previously without combination
+top_features_names_breast_cancer = [
+    'worst concave points',
+    'worst perimeter',
+    'mean concave points',
+   ' worst radius',
+    'mean perimeter',
+    'worst area',
+    'mean radius',
+    'mean area',
+    'mean concavity',
+    'worst concavity'
+]
+
+# 3/ And now the top 10 features we identified previously with combinations
+top_combined_features_names_breast_cancer = [
+    worst perimeter worst smoothness',
+    worst radius worst smoothness',
+    worst texture worst concave points',
+    mean texture worst concave points',
+    worst radius worst concave points',
+    mean radius worst texture worst concave points',
+    mean radius worst concave points',
+    mean concave points worst texture',
+    mean perimeter worst texture worst concave points',
+    mean perimeter worst smoothness'
+]
+
+# 4/ We create the same new features as before
+X_breast_cancer_enhanced = create_features(X_breast_cancer_preprocessed)
+
+# 5/ We extract the best features
+X_breast_cancer_selected1 = X_breast_cancer_enhanced[top_features_names_breast_cancer]
+X_breast_cancer_selected2 = X_breast_cancer_enhanced[top_combined_features_names_breast_cancer]
+```
+
+We then build the RF models and launch the different training and measured the time. 
 
 ### 5. Evaluate the optimization time
 
