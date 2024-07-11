@@ -30,19 +30,19 @@ In this project, we use the database named "Breast Cancer Wisconsin (Diagnostic)
 
 ## Project architecture
 
-This project is made of XXX scripts and consists of five main tasks:
+This project is made of 5 scripts and consists of five main tasks:
 
-[***1. The pre-defined functions***](#-the-pre-defined-functions)
-[***1. Isolate the best features without any combinations***](#1-isolate-the-best-features-without-any-combinations)  
-[***2. Isolate the best features with combinations***](#2-isolate-the-best-features-with-combinations)  
-[***3. Evaluate the training time in these conditions***](#3-evaluate-the-training-time-in-these-conditions)  
-[***4. Evaluate the optimization time***](#4-evaluate-the-optimization-time)  
+[***1. The pre-defined functions***](#-the-pre-defined-functions)   
+[***2. Isolate the best features without any combinations***](#1-isolate-the-best-features-without-any-combinations)  
+[***3. Isolate the best features with combinations***](#2-isolate-the-best-features-with-combinations)  
+[***4. Evaluate the training time in these conditions***](#3-evaluate-the-training-time-in-these-conditions)  
+[***5. Evaluate the optimization time***](#4-evaluate-the-optimization-time)  
 
 These four scripts will use several functions that we predifined in an external python file called [MyPythonFunctions.py](MyPythonFunctions.py)
 
 Let us see in more details these five aspects.
 
-### 0. The pre-defined functions
+### 1. The pre-defined functions
 
 In the [MyPythonFunctions.py](MyPythonFunctions.py), we store all the functions we need to define to perform the tasks in the next sections. Among these functions we can find:   
    ***load_breast_cancer_data***: Function to load the dataset "breasr_cancer" from the scikit-learn library   
@@ -53,9 +53,9 @@ In the [MyPythonFunctions.py](MyPythonFunctions.py), we store all the functions 
    ***calculate_correlations***: Function to compute the correlations between the new features and the corresponded target   
    ***visualize_top_features***: Function to visualize the best features
 
-### 1. Isolate the best features without any combinations
+### 2. Isolate the best features without any combinations
 
-The script, named as [1-Isolate-best-features-without-combinations](1-Isolate-best-features-without-combinations) starts by loading the dataset:
+The script, named as [1-Isolate-best-features](1-Isolate-best-features) starts by loading the dataset:
 ```python
 #!/usr/bin/env python
 
@@ -141,6 +141,11 @@ top_features_names_breast_cancer = [feature for feature, _ in top_features_breas
 #visualize_top_features(X_breast_cancer_enhanced, y_breast_cancer, top_features_names_breast_cancer, "Breast Cancer Dataset Enhanced")
 ```
 
+The code can be launched by entering in your terminal:
+```bash
+python 1-Isolate-best-features
+```
+
 On your screen, you should see the following result:
 ```
 Breast Cancer Dataset loaded successfully.
@@ -157,113 +162,61 @@ mean concavity: 0.6963597071719059
 worst concavity: 0.659610210369233
 ```
 
-We can then see that the "worst concave points", "worst perimeter" and "mean concave points" are the three best features that correlate well with the target. 
+We can then see that the "worst concave points", "worst perimeter" and "mean concave points" are the three best features that correlate well with the target, with the best result at 0.79. 
 
-### 2. Pre-treat the data
+### 3. Isolate the best features with combinations
 
-Before manipulating them, the data have to be first converted. We first converted the targets into binaries:   
-
+Now, we will see how combining the data together can help to increase the accuracy of the model. To do that, we will use the same script as before, but by changing only one line:
 ```python
-# We convert the target into binaries
-from sklearn.preprocessing import LabelEncoder
+# 3/ Then, create the new features
+X_breast_cancer_enhanced = create_features(X_breast_cancer_preprocessed, combination=4) # combination here define the degree of combination we will use
+```
+Here, we will select 4, which means that we will combine 4 features together in each of the new features we will create. As a total, we will thus create 4638 new features !
 
-label_encoder_drug = LabelEncoder()
-y_drug = label_encoder_drug.fit_transform(y_drug)
-
-label_encoder_cancer = LabelEncoder()
-y_cancer = label_encoder_cancer.fit_transform(y_cancer)
+As before, you can now launch the code in your terminal:
+```bash
+python 1-Isolate-best-features
 ```
 
-and then the features:
-```python
-# We pre-treat the features before using them
-
-def preprocess_data(X):
-    X = X.copy()
-    for col in X.select_dtypes(include=['object']).columns:
-        X[col] = X[col].fillna('missing')
-        X[col] = LabelEncoder().fit_transform(X[col])
-    for col in X.select_dtypes(include=['float64', 'int64']).columns:
-        X[col] = X[col].fillna(X[col].median())
-    return X
-
-X_drug_preprocessed = preprocess_data(X_drug)
-X_cancer_preprocessed = preprocess_data(X_cancer)
+and you should now observe in your terminal the following results:
+```
+Breast Cancer Dataset loaded successfully.
+Top 10 features with their correlation score -- Breast Cancer Dataset:
+worst perimeter worst smoothness: 0.8077304593739741
+worst radius worst smoothness: 0.8066751990639625
+worst texture worst concave points: 0.8061003882272
+mean texture worst concave points: 0.8038085065816557
+worst radius worst concave points: 0.8004479144662467
+mean radius worst texture worst concave points: 0.8002599353725561
+mean radius worst concave points: 0.79787539682551
+mean concave points worst texture: 0.7974094767316239
+mean perimeter worst texture worst concave points: 0.7967988135459076
+mean perimeter worst smoothness: 0.7965052344416643
 ```
 
-### 3. Measure the possible correlations
+You can observe here a better correlation between the new features and the target, with a maximal score of 0.807. It thus shows the importance of considering the combination of features together, as we did previously in the main branch.   
 
-The data being pre-processed, we can now start the measure of possible correlations between the features and the corresponding targets. To do this task, we first create new features that are based on combinations between the pre-existing features:
+Importantly, the choice to set the combination to 4 is purely empiric. However, this parameter can be tuned in future studies, but empirically, I almost observed good results when this parameter was set between 3 and 6. 
 
-```python
-# In order to visualize how the features can correlate well with the target, 
-# we create interactions between the features and then we apply non-linear
-# tranformations
-from sklearn.preprocessing import PolynomialFeatures
+### 4. Evaluate the training time
 
-def create_features(X):
-    poly = PolynomialFeatures(degree=4, interaction_only=False, include_bias=False)
-    X_poly = poly.fit_transform(X)
-    return pd.DataFrame(X_poly, columns=poly.get_feature_names_out(X.columns))
 
-X_drug_enhanced = create_features(X_drug_preprocessed)
-X_cancer_enhanced = create_features(X_cancer_preprocessed)
-```
 
-Importantly, here we decided to use "degree=4" in the "PolynomialFeatures" function. This is purely an empirical choice and the user is free to use either less complex (degree=3) or more complex (degree=5) combinations between the features.   
+### 5. Evaluate the optimization time
 
-Once the new features are created and stored in "X_drug_enhanced" and "X_cancer_enhanced", we can use the Pearson correlation method to evaluate the possible correlations between these new features and the corresponding targets:   
-```python
-# Once the new correlated features are created, we can calculate the correlation
-# using the Pearson Correlation method 
-from scipy.stats import pearsonr
 
-def calculate_correlations(X, y):
-    correlations = {}
-    for col in X.columns:
-        corr, _ = pearsonr(X[col], y)
-        correlations[col] = abs(corr)
-    return correlations
-
-correlations_drug_enhanced = calculate_correlations(X_drug_enhanced, y_drug)
-```
-
-### 4. Interpret the results
-
-Finally we can print the results:
-```python
-print("Correlations with the target -> drug200.csv:")
-print(sorted(correlations_drug_enhanced.items(), key=lambda item: item[1], reverse=True)[:5])  # Print only the 5 best correlations
-
-correlations_cancer_enhanced = calculate_correlations(X_cancer_enhanced, y_cancer)
-print("Correlations with the target -> dataset.csv:")
-print(sorted(correlations_cancer_enhanced.items(), key=lambda item: item[1], reverse=True)[:5]) # Print only the 5 best correlations
-```
-
-and we should observe this on our screen:
-```
-Correlations with the target -> drug200.csv:
-[('Na_to_K', 0.5891198660590571), ('Na_to_K^2', 0.5293393240544266), ('Age Na_to_K^2', 0.47156637415498887), ('BP Na_to_K', 0.46774484303852415), ('Na_to_K^3', 0.45736262390586513)]
-Correlations with the target -> dataset.csv:
-[('AGE^2 CHRONIC_DISEASE WHEEZING', 0.05834562878524951), ('AGE PEER_PRESSURE WHEEZING CHEST_PAIN', 0.056746749185962), ('AGE CHRONIC_DISEASE WHEEZING CHEST_PAIN', 0.056429262998627674), ('AGE PEER_PRESSURE WHEEZING ALCOHOL_CONSUMING', 0.05616977449562988), ('AGE WHEEZING^2 CHEST_PAIN', 0.05579777889721853)]
-```
 
 ***How to interpret these results ?***
 
-The results here show the five best correlations for each of the databases. The coefficient is encompassed between -1 and 1, with 0 meaning that no correlations can be found. More information about this method can be found here: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html
-
-The main remark here is that the features present in drug200.csv show good correlations with their corresponding targets, with the features "Na_to_K", "Age" and "BP" being the most prominent ones. It thus explains why building classification models with these data was feasible in our previous project.   
-
-However, the correlations for features present in lung_cancer.csv show very bad correlations, with the maximum being less than 0.06. It demonstrates that if we try to build an ML model on these data, the prediction would be random as the model will not be able to learn based on these features.   
 
 ***What do do next ?***
 
-With these results, the owners of the database [lung_cancer.csv](databases/lung_cancer.csv) should revised their features and create new more relevant features that would be more suitable for next generation of ML-based models in the future. Furthermore, this simple but efficient approach is crucial to predict the potential efficiency of any ML model which would be trained on data. 
+ 
 
 ## Code and jupyter notebook available
 
-The full code is available here: [data_consistency.py](data_consistency.py).   
+The full code is available here:    
 
-The jupyter notebook released on Kaggle is available here: https://www.kaggle.com/code/celerse/data-consistency
+The jupyter notebook released on Kaggle is available here: 
 
 If you have any comments, remarks, or questions, do not hesitate to leave a comment or to contact me directly. I would be happy to discuss it directly with you !
