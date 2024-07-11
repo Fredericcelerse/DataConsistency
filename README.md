@@ -404,6 +404,13 @@ CASE4: THE BEST NON_COMBINED FEATURES
 Number of features: 569 --- Training time: 3.3202831745147705 --- Accuracy: 0.9824561403508771
 ```
 
+Finally, we can see the following things:
+- First, taking into account our combining features lead to slightly better results
+- Taking all the combined features (569) here lead to a remarkable result (98% of accuracy Vs 96% with the initial ones)
+- However, the training time is much more higher (3.3 s Vs 0.15 s in average), which could be an issue for larger database
+
+Now we saw that one of the best result could be obtained with our 4 best combined features, let's see how it could be used to optimize the simulation time related to the hyperparameters optimization process. 
+
 ### 5. Evaluate the optimization time
 
 
