@@ -44,65 +44,120 @@ Let us see in more details these five aspects.
 
 ### 0. The pre-defined functions
 
+In the [MyPythonFunctions.py](MyPythonFunctions.py), we store all the functions we need to define to perform the tasks in the next sections. Among these functions we can find:   
+   ***load_breast_cancer_data***: Function to load the dataset "breasr_cancer" from the scikit-learn library   
+   ***display_dataset_info***: Function to visualize the dataset   
+   ***check_data_loaded***: Function to check if the dataset was correctly loaded   
+   ***preprocess_data***: Function to preprocess the data   
+   ***create_features***: Function to create interactions between the features and apply the non-linear transformations   
+   ***calculate_correlations***: Function to compute the correlations between the new features and the corresponded target   
+   ***visualize_top_features***: Function to visualize the best features
+
 ### 1. Isolate the best features without any combinations
 
-The script starts by loading the two datasets:
+The script, named as [1-Isolate-best-features-without-combinations](1-Isolate-best-features-without-combinations) starts by loading the dataset:
 ```python
 #!/usr/bin/env python
 
-# We first read the data
 import pandas as pd
-drug_data_path = "/kaggle/input/drugs-a-b-c-x-y-for-decision-trees/drug200.csv"
-cancer_data_path = "/kaggle/input/lung-cancer-dataset/dataset.csv"
 
-drug_data = pd.read_csv(drug_data_path)
-cancer_data = pd.read_csv(cancer_data_path)
+# We import here our mad-home libraries
+from MyPythonFunctions import (
+    load_breast_cancer_data,
+    display_dataset_info,
+    check_data_loaded,
+    preprocess_data,
+    create_features,
+    calculate_correlations,
+    visualize_top_features
+)
+
+# 1/ First, load the dataset and pre-treat the data
+X_breast_cancer, y_breast_cancer = load_breast_cancer_data()
+
+X_breast_cancer_preprocessed = preprocess_data(X_breast_cancer)
 ```
-The model will first load the two databases of interest. We then print an overview of these two datasets in order to check if everything was loaded correctly:
+
+The model will first load the database of interest. We then print an overview of the dataset:
 ```python
-# We check the data and separate the features to the target
-
-print(drug_data.head())
-print(cancer_data.head())
-
-X_drug = drug_data.iloc[:, :-1]
-y_drug = drug_data.iloc[:, -1]
-
-X_cancer = cancer_data.iloc[:, :-1]
-y_cancer = cancer_data.iloc[:, -1]
+display_dataset_info(X_breast_cancer, y_breast_cancer, "Breast Cancer Dataset")
 ```
 
 On your screen, you should then see:
 ```
-   Age Sex      BP Cholesterol  Na_to_K   Drug
-0   23   F    HIGH        HIGH   25.355  drugY
-1   47   M     LOW        HIGH   13.093  drugC
-2   47   M     LOW        HIGH   10.114  drugC
-3   28   F  NORMAL        HIGH    7.798  drugX
-4   61   F     LOW        HIGH   18.043  drugY
-  GENDER  AGE  SMOKING  YELLOW_FINGERS  ANXIETY  PEER_PRESSURE  \
-0      M   65        1               1        1              2   
-1      F   55        1               2        2              1   
-2      F   78        2               2        1              1   
-3      M   60        2               1        1              1   
-4      F   80        1               1        2              1   
+Dataset: Breast Cancer Dataset
+Features: ['mean radius', 'mean texture', 'mean perimeter', 'mean area', 'mean smoothness', 'mean compactness', 'mean concavity', 'mean concave points', 'mean symmetry', 'mean fractal dimension', 'radius error', 'texture error', 'perimeter error', 'area error', 'smoothness error', 'compactness error', 'concavity error', 'concave points error', 'symmetry error', 'fractal dimension error', 'worst radius', 'worst texture', 'worst perimeter', 'worst area', 'worst smoothness', 'worst compactness', 'worst concavity', 'worst concave points', 'worst symmetry', 'worst fractal dimension']
+Shape: (569, 30)
+First 5 rows of the dataset:
+   mean radius  mean texture  mean perimeter  mean area  mean smoothness  ...  worst compactness  worst concavity  worst concave points  worst symmetry  worst fractal dimension
+0        17.99         10.38          122.80     1001.0          0.11840  ...             0.6656           0.7119                0.2654          0.4601                  0.11890
+1        20.57         17.77          132.90     1326.0          0.08474  ...             0.1866           0.2416                0.1860          0.2750                  0.08902
+2        19.69         21.25          130.00     1203.0          0.10960  ...             0.4245           0.4504                0.2430          0.3613                  0.08758
+3        11.42         20.38           77.58      386.1          0.14250  ...             0.8663           0.6869                0.2575          0.6638                  0.17300
+4        20.29         14.34          135.10     1297.0          0.10030  ...             0.2050           0.4000                0.1625          0.2364                  0.07678
 
-   CHRONIC_DISEASE  FATIGUE  ALLERGY  WHEEZING  ALCOHOL_CONSUMING  COUGHING  \
-0                2        1        2         2                  2         2   
-1                1        2        2         2                  1         1   
-2                1        2        1         2                  1         1   
-3                2        1        2         1                  1         2   
-4                1        2        1         2                  1         1   
-
-   SHORTNESS_OF_BREATH  SWALLOWING_DIFFICULTY  CHEST_PAIN LUNG_CANCER  
-0                    2                      2           1          NO  
-1                    1                      2           2          NO
-2                    2                      1           1         YES  
-3                    1                      2           2         YES  
-4                    1                      1           2          NO  
+[5 rows x 30 columns]
 ```
 
-Thus, we see that the data are loaded correctly !
+Thus, we see that the data are loaded correctly !   
+
+The data are then preprocessed:
+```python
+X_breast_cancer_preprocessed = preprocess_data(X_breast_cancer)
+```
+
+A check is then made to see if the data were loaded correctly:
+```python
+# 2/ Check the loading of the data
+check_data_loaded(X_breast_cancer, y_breast_cancer, "Breast Cancer Dataset")
+```
+
+We then establish the features we would like to consider here:
+```python
+# 3/ Then, create the new features
+X_breast_cancer_enhanced = create_features(X_breast_cancer_preprocessed, combination=1) # combination here define the degree of combination we will use
+```
+As you can see, we set the parameter "combination" to 1, which means that no combinations between the features will be done !   
+
+We then proceed to the calculations of the correlations between the features and the target:
+```python
+# 4/ Compute the correlations between the new features and the target
+correlations_breast_cancer_enhanced = calculate_correlations(X_breast_cancer_enhanced, y_breast_cancer)
+top_features_breast_cancer = sorted(correlations_breast_cancer_enhanced.items(), key=lambda item: item[1], reverse=True)[:10]
+```
+Here, 10 means that we will conserve only the 10 best features !
+
+And finally, we will print the top 10 features with their score, and optionally we can visualize their correlations by plotting them:
+```python
+# 5/ Print the 10 best features with their score
+print("Top 10 features with their correlation score -- Breast Cancer Dataset:")
+for feature, score in top_features_breast_cancer:
+    print(f"{feature}: {score}")
+
+# 6/ Extract the name of the best features
+top_features_names_breast_cancer = [feature for feature, _ in top_features_breast_cancer]
+
+# 7/ Optionnaly, visualize their relationship with the target
+#visualize_top_features(X_breast_cancer_enhanced, y_breast_cancer, top_features_names_breast_cancer, "Breast Cancer Dataset Enhanced")
+```
+
+On your screen, you should see the following result:
+```
+Breast Cancer Dataset loaded successfully.
+Top 10 features with their correlation score -- Breast Cancer Dataset:
+worst concave points: 0.79356601714127
+worst perimeter: 0.7829141371737592
+mean concave points: 0.7766138400204354
+worst radius: 0.7764537785950396
+mean perimeter: 0.7426355297258331
+worst area: 0.733825034921051
+mean radius: 0.7300285113754564
+mean area: 0.70898383658539
+mean concavity: 0.6963597071719059
+worst concavity: 0.659610210369233
+```
+
+We can then see that the "worst concave points", "worst perimeter" and "mean concave points" are the three best features that correlate well with the target. 
 
 ### 2. Pre-treat the data
 
