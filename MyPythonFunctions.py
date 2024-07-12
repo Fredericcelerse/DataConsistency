@@ -9,6 +9,8 @@ from scipy.stats import pearsonr
 import seaborn as sns
 import matplotlib.pyplot as plt
 import time
+from sklearn.model_selection import train_test_split
+from skopt import BayesSearchCV
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, accuracy_score, roc_auc_score
 
@@ -77,3 +79,35 @@ def train_RF(X_train, X_test, y_train, y_test):
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
     return training_time, accuracy
+
+# Function to automatized the hyperparameters tuning for RF
+def optimize_model(X_train, y_train):
+    param_space = {
+        'n_estimators': (100, 300),
+        'max_depth': (10, 30),
+        'min_samples_split': (2, 10),
+        'min_samples_leaf': (1, 4)
+    }
+    
+    rf = RandomForestClassifier(random_state=42)
+    bayes_search = BayesSearchCV(estimator=rf, search_spaces=param_space, cv=5, n_jobs=-1, verbose=2, n_iter=50)
+    
+    start_time = time.time()
+    bayes_search.fit(X_train, y_train)
+    optimization_time = time.time() - start_time
+    
+    return bayes_search.best_params_, optimization_time
+
+# Function to retrain and evaluate RF model with the best parameters
+def train_and_evaluate_model(X_train, X_test, y_train, y_test, best_params):
+    model = RandomForestClassifier(random_state=42, **best_params)
+    model.fit(X_train, y_train)
+    
+    y_pred = model.predict(X_test)
+    y_pred_proba = model.predict_proba(X_test)[:, 1]
+    
+    accuracy = accuracy_score(y_test, y_pred)
+    report = classification_report(y_test, y_pred)
+    roc_auc = roc_auc_score(y_test, y_pred_proba)
+    
+    return accuracy, report, roc_auc
