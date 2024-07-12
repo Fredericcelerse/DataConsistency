@@ -413,14 +413,49 @@ Now we saw that one of the best result could be obtained with our 4 best combine
 
 ### 5. Evaluate the optimization time
 
+Finally, we see here how the number of features is influencing the simulation we need for the hyperparameters tuning. We use the script [3-Optimized-RF.py](3-Optimized-RF.py), which will make the optimization with the 4 best features and the whole parameters.   
 
+In the terminal, you can launch the code by typing:
+```bash
+python 3-Optimized-RF.py
+```
+
+And as a result, you will obtain:
+
+```
+Best parameters for the RF model with only the 4 best features:
+OrderedDict([('max_depth', 11), ('min_samples_leaf', 1), ('min_samples_split', 9), ('n_estimators', 220)])
+Optimization time: 95.3313 seconds
+
+Optimized model with the 4 best features:
+Accuracy: 0.9737
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.95      0.98      0.97        43
+           1       0.99      0.97      0.98        71
+
+    accuracy                           0.97       114
+   macro avg       0.97      0.97      0.97       114
+weighted avg       0.97      0.97      0.97       114
+
+ROC AUC Score: 0.9948
+
+
+
+```
 
 ***How to interpret these results ?***
 
+- First, we can say that we do not see any improvement in our results. This could be due to two main reasons:
+  - First, the results are already very impressive, and it is thus hard to improve the model
+  - But also, we maybe need to increase our research space defined by our Bayesian Optimization, but a the price of more computational time ...
+- Then, the optimization time using only the 4 best features (96 s) is much more lower than the one needed with the full features (), but for only a small piece of improvement. In our case, it does not matter because of it is fast, but it could be rapidly a bigger issue for larger and more complex databases in future case studies ...
+- Combining features together does not take too much time, and give you a nice overview of the quality of the data you have.
 
 ***What do do next ?***
 
- 
+Apply this approach of the best combined features to tackle more complex and bigger databases in different type of fields, including life science or finance for instance! 
 
 ## Code and jupyter notebook available
 
