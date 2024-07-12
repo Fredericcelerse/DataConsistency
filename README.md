@@ -51,8 +51,10 @@ In the [MyPythonFunctions.py](MyPythonFunctions.py), we store all the functions 
    ***preprocess_data***: Function to preprocess the data   
    ***create_features***: Function to create interactions between the features and apply the non-linear transformations   
    ***calculate_correlations***: Function to compute the correlations between the new features and the corresponded target   
-   ***visualize_top_features***: Function to visualize the best features
-   ***train_RF***: Function to train a Random Forest classification algorithm
+   ***visualize_top_features***: Function to visualize the best features   
+   ***train_RF***: Function to train a Random Forest classification algorithm    
+   ***optimize_model***: Function to automatized the hyperparameters tuning for RF
+   ***train_and_evaluate_model***: Function to retrain and evaluate RF model with the best parameters
 
 ### 2. Isolate the best features without any combinations
 
