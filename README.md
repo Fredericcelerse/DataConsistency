@@ -444,7 +444,23 @@ weighted avg       0.97      0.97      0.97       114
 ROC AUC Score: 0.9948
 
 
+Best parameters for the RF model with only the 4 best features:
+OrderedDict([('max_depth', 19), ('min_samples_leaf', 1), ('min_samples_split', 3), ('n_estimators', 107)])
+Optimization time: 740.5391 seconds
 
+Optimized model with the whole features:
+Accuracy: 0.9825
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       1.00      0.95      0.98        43
+           1       0.97      1.00      0.99        71
+
+    accuracy                           0.98       114
+   macro avg       0.99      0.98      0.98       114
+weighted avg       0.98      0.98      0.98       114
+
+ROC AUC Score: 0.9959
 ```
 
 ***How to interpret these results ?***
