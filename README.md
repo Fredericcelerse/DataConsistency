@@ -77,7 +77,7 @@ Correlations with the target -> combination = 5:
 [('Hb', 0.839850957687261), ('Sex^2 Hb', 0.6682132367773528), ('Number^2 Hb', 0.6576444881621494), ('%Green pixel', 0.6308513695257353), ('Sex^4 Hb', 0.6093366334419581)]
 Selected features for combination 5: ['Hb', 'Sex^2 Hb', 'Number^2 Hb', '%Green pixel', 'Sex^4 Hb']
 ```
-We can then see that the combination 5 offers the best results, we thus decide to conserve these features: 'Hb', 'Sex^2 Hb', 'Number^2 Hb', '%Green pixel', 'Sex^4 Hb'
+We can then see that the combination 5 offers the best results, we thus decide to conserve these features: 'Hb', 'Sex^2 Hb', 'Number^2 Hb', '%Green pixel', 'Sex^4 Hb'. These features with their corresponded target are saved in an external file named [best_features_data.csv](best_features_data.csv)
 
 ### 2. Train and evaluate an SVM model with Bayesian Optimization
 
