@@ -477,6 +477,6 @@ Apply this approach of the best combined features to tackle more complex and big
 
 ## Code and jupyter notebook available
 
-The jupyter notebook released on Kaggle is available here: XXX
+The jupyter notebook released on Kaggle is available here: https://www.kaggle.com/code/celerse/optimizefeatures
 
 If you have any comments, remarks, or questions, do not hesitate to leave a comment or to contact me directly. I would be happy to discuss it directly with you !
