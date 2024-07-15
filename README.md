@@ -30,7 +30,7 @@ In this project, we use the database named "BAnaemia Prediction Dataset", availa
 
 ## Project architecture
 
-This project is made of 3 scripts and consists of three main tasks:
+This project is made of 2 scripts and consists of three main tasks:
 
 [***1. Load the data and isolate the best features with combinations***](#1-load-the-data-and-isolate-the-best-features-with-combinations)  
 [***2. Train and evaluate an SVM model with Bayesian Optimization***](#2-train-and-evaluate-an-svm-model-with-bayesian-optimization) 
@@ -48,7 +48,7 @@ The methodology is very standard to the one we are using here for isolating rele
 - Finally, we conserve the 5 best features
 
 To do this task, you can execute in the terminal the code:
-```python
+```
 python 1-Create-Features-and-Train-Model
 ```
 
