@@ -12,7 +12,7 @@ best_model = joblib.load('svm_model.joblib')
 label_encoder_anemia = joblib.load('label_encoder_anemia.joblib')
 
 # We read the new csv file
-new_data_path = "expanded_output.csv"
+new_data_path = "Databases/expanded_output.csv"
 new_data = pd.read_csv(new_data_path)
 
 # We check the data and separate the features from the target
