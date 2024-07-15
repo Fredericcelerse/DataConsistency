@@ -158,10 +158,14 @@ Predictions:
  0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 ```
 
+***How to interpret these results ?***
+
 Finally, we can see a perfect prediction, meaning that:
 - First, the features are perfectly consistent with their respective target
 - Then, the hyperparameters are well tuned
 - And finally, no extrapolations are observed, meaning that our model can be used safely !
+
+***What do do next ?***
 
 As an opening, if there is doubt in certain prediction, the option "probability=True" can be used to evaluate its uncertainty. To do that, you can change these lines in the code [2-Test-the-Model.py](2-Test-the-Model.py):
 ```
@@ -178,3 +182,9 @@ and
 ```
 
 These slitghly modifications will give you access to the probability of the prediction  !
+
+## Code and jupyter notebook available
+
+The jupyter notebook released on Kaggle is available here: [https://www.kaggle.com/code/celerse/optimizefeatures
+](https://www.kaggle.com/code/celerse/perfectanemiapredictions)
+If you have any comments, remarks, or questions, do not hesitate to leave a comment or to contact me directly. I would be happy to discuss it directly with you !
