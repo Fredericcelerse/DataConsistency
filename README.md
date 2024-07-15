@@ -1,16 +1,12 @@
-# DataConsistency
-![Alt text](Data_consistency_in_AI.png)
+# DataConsistency: Application 2
 
-This introductory project demonstrates the importance of verifying data consistency prior to using any ML approach.   
-
-In this example, we show how to measure possible correlations between the features of the dataset and the corresponding targets.
+In this branch, we will apply our approach on a specific dataset named "Anaemia Prediction Dataset".
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
-  - [Anaconda](#anaconda)
-  - [Setup conda environment](#setup-conda-environment)
+  - [Anaconda and conda environment](#anaconda-and-conda-environment)
   - [Databases](#databases)
-- [Initial goal of the project](#initial-goal-of-the-project)
+- [Goal of the project](#goal-of-the-project)
 - [Project architecture](#project-architecture)
   - [1. Load the datasets](#1-load-the-datasets)
   - [2. Pre-treat the data](#2-pre-treat-the-data)
@@ -20,217 +16,165 @@ In this example, we show how to measure possible correlations between the featur
 
 ## Prerequisites
 
-### Anaconda
+### Anaconda and conda environment
 
-To execute the code, we will set up a specific environment using Anaconda. To install it, visit [Anaconda Installation](https://docs.anaconda.com/free/anaconda/install/).
+It is the same prerequisites as the one specified in the main branch of this project.
 
-### Setup conda environment
+### Database
 
-First, create the conda environment:
-```
-conda create -n DataConsistency python=3.8
-```
+In this project, we use the database named "BAnaemia Prediction Dataset", available on the Kaggle website: [https://www.kaggle.com/datasets/uciml/breast-cancer-wisconsin-data](https://www.kaggle.com/datasets/humairmunir/anaemia-prediction-dataset/data)
 
-Then, activate the conda environment:
-```
-conda activate DataConsistency
-```
+## Goal of the project
 
-Once the environment is properly created, install the necessary Python libraries to execute the code:
-```
-pip install scikit-learn numpy pandas scipy
-```
-
-### Databases
-
-In this project, we use two databases available on Kaggle and stored here in the folder [databases](databases):   
-   1. [drug200.csv](databases/drug200.csv): a dataset made of 200 lines, where depending on several features a specific drug is assigned (A/B/C/X/Y). More information is available on the following website: https://www.kaggle.com/datasets/pablomgomez21/drugs-a-b-c-x-y-for-decision-trees/data. Furthermore, we also recently dedicated an ML project which is now released on GitHub at this address: https://github.com/Fredericcelerse/DrugClassification/tree/main    
-   2. [lung_cancer.csv](databases/lung_cancer.csv): This new database, released a few weeks ago on Kaggle (https://www.kaggle.com/datasets/akashnath29/lung-cancer-dataset) consists of 3000 lines, where depending on the features we say if YES or NO the patient has lung cancer.   
-
-## Initial goal of the project
-
-The initial goal of this project was to build an ML model, very similar to what we did before for the "DrugClassification" project (https://github.com/Fredericcelerse/DrugClassification/tree/main), where a patient could evaluate the risk of having lung cancer based on his symptoms.   
-
-However, every model we used only provided accuracy not higher than 54.5%, showing very random results in our predictions. On Kaggle, similar projects also demonstrate the same accuracy by employing several other methods. It finally shows that the data cannot be used accurately to build an ML model.   
-
-But instead of just concluding on that, I would like to show ***why it is so problematic in this case to build an ML model***. This is why we dedicate this project to building a small but efficient pipeline which can provide simple explanations on this issue.
+***The goal of the project is to apply our approach of combining features in order to evaluate the efficiency of future ML models built on them*** 
 
 ## Project architecture
 
-This project is made of one script labeled [data_consistency.py](data_consistency.py) and consists of four main tasks:
+This project is made of 3 scripts and consists of three main tasks:
 
-[***1. Load the datasets***](#1-load-the-datasets)  
-[***2. Pre-treat the data***](#2-pre-treat-the-data)  
-[***3. Measure the possible correlations***](#3-measure-the-possible-correlations)  
-[***4. Interpret the results***](#4-interpret-the-results)  
+[***1. Load the data and isolate the best features with combinations***](#1-load-the-data-and-isolate-the-best-features-with-combinations)  
+[***2. Train and evaluate an SVM model with Bayesian Optimization***](#2-train-and-evaluate-an-svm-model-with-bayesian-optimization) 
+[***3. Save the model and apply it on external data***](#3-save-the-model-and-apply-it-on-external-data)  
 
-Let us see in more details these four aspects
+Let us see in more details these aspects.
 
-### 1. Load the datasets
+### 1. Load the data and isolate the best features with combinations
 
-The script starts by loading the two datasets:
+The methodology is very standard to the one we are using here for isolating relevant features:
+- We first load the data
+- Then we preprocess them using python functions
+- We build new features based on combinations between the initial features
+- We evaluate their correlation with the respective targets using the Pearson coefficient
+- Finally, we conserve the 5 best features
+
+To do this task, you can execute in the terminal the code:
 ```python
-#!/usr/bin/env python
-
-# We first read the data
-import pandas as pd
-drug_data_path = "/kaggle/input/drugs-a-b-c-x-y-for-decision-trees/drug200.csv"
-cancer_data_path = "/kaggle/input/lung-cancer-dataset/dataset.csv"
-
-drug_data = pd.read_csv(drug_data_path)
-cancer_data = pd.read_csv(cancer_data_path)
-```
-The model will first load the two databases of interest. We then print an overview of these two datasets in order to check if everything was loaded correctly:
-```python
-# We check the data and separate the features to the target
-
-print(drug_data.head())
-print(cancer_data.head())
-
-X_drug = drug_data.iloc[:, :-1]
-y_drug = drug_data.iloc[:, -1]
-
-X_cancer = cancer_data.iloc[:, :-1]
-y_cancer = cancer_data.iloc[:, -1]
+python 1-Create-Features-and-Train-Model
 ```
 
-On your screen, you should then see:
+As a result, you will obtain:
 ```
-   Age Sex      BP Cholesterol  Na_to_K   Drug
-0   23   F    HIGH        HIGH   25.355  drugY
-1   47   M     LOW        HIGH   13.093  drugC
-2   47   M     LOW        HIGH   10.114  drugC
-3   28   F  NORMAL        HIGH    7.798  drugX
-4   61   F     LOW        HIGH   18.043  drugY
-  GENDER  AGE  SMOKING  YELLOW_FINGERS  ANXIETY  PEER_PRESSURE  \
-0      M   65        1               1        1              2   
-1      F   55        1               2        2              1   
-2      F   78        2               2        1              1   
-3      M   60        2               1        1              1   
-4      F   80        1               1        2              1   
-
-   CHRONIC_DISEASE  FATIGUE  ALLERGY  WHEEZING  ALCOHOL_CONSUMING  COUGHING  \
-0                2        1        2         2                  2         2   
-1                1        2        2         2                  1         1   
-2                1        2        1         2                  1         1   
-3                2        1        2         1                  1         2   
-4                1        2        1         2                  1         1   
-
-   SHORTNESS_OF_BREATH  SWALLOWING_DIFFICULTY  CHEST_PAIN LUNG_CANCER  
-0                    2                      2           1          NO  
-1                    1                      2           2          NO
-2                    2                      1           1         YES  
-3                    1                      2           2         YES  
-4                    1                      1           2          NO  
+   Number Sex  %Red Pixel  %Green pixel  %Blue pixel        Hb Anaemic
+0       1   M   43.170845     30.945626    25.921971  6.252659     Yes
+1       2   F   43.163481     30.306974    26.759843  8.578865     Yes
+2       3   F   46.269997     27.315656    26.028556  9.640936     Yes
+3       4   F   45.054787     30.469816    24.460797  4.794217     Yes
+4       5  M    45.061884     31.218572    24.071714  8.865329     Yes
+New combined features with combination = 1 created !
+New combined features with combination = 2 created !
+New combined features with combination = 3 created !
+New combined features with combination = 4 created !
+New combined features with combination = 5 created !
+Correlations with the target -> combination = 1:
+[('Hb', 0.839850957687261), ('%Green pixel', 0.6308513695257353), ('%Red Pixel', 0.4016312389715565), ('Number', 0.3818279000835077), ('Sex', 0.1627221488089796)]
+Correlations with the target -> combination = 2:
+[('Hb', 0.839850957687261), ('%Green pixel', 0.6308513695257353), ('Number^2', 0.5475906890322616), ('%Red Pixel', 0.4016312389715565), ('Number', 0.3818279000835077)]
+Correlations with the target -> combination = 3:
+[('Hb', 0.839850957687261), ('Sex^2 Hb', 0.6682132367773528), ('Number^2 Hb', 0.6576444881621494), ('%Green pixel', 0.6308513695257353), ('Number^2', 0.5475906890322616)]
+Correlations with the target -> combination = 4:
+[('Hb', 0.839850957687261), ('Sex^2 Hb', 0.6682132367773528), ('Number^2 Hb', 0.6576444881621494), ('%Green pixel', 0.6308513695257353), ('Number^2', 0.5475906890322616)]
+Correlations with the target -> combination = 5:
+[('Hb', 0.839850957687261), ('Sex^2 Hb', 0.6682132367773528), ('Number^2 Hb', 0.6576444881621494), ('%Green pixel', 0.6308513695257353), ('Sex^4 Hb', 0.6093366334419581)]
+Selected features for combination 5: ['Hb', 'Sex^2 Hb', 'Number^2 Hb', '%Green pixel', 'Sex^4 Hb']
 ```
+We can then see that the combination 5 offers the best results, we thus decide to conserve these features: 'Hb', 'Sex^2 Hb', 'Number^2 Hb', '%Green pixel', 'Sex^4 Hb'
 
-Thus, we see that the data are loaded correctly !
+### 2. Train and evaluate an SVM model with Bayesian Optimization
 
-### 2. Pre-treat the data
-
-Before manipulating them, the data have to be first converted. We first converted the targets into binaries:   
-
-```python
-# We convert the target into binaries
-from sklearn.preprocessing import LabelEncoder
-
-label_encoder_drug = LabelEncoder()
-y_drug = label_encoder_drug.fit_transform(y_drug)
-
-label_encoder_cancer = LabelEncoder()
-y_cancer = label_encoder_cancer.fit_transform(y_cancer)
+In the continuity, the code will select these features and build an SVM model and autoomatically optimized the hyperparameters using the Bayesian Optimization approach. As a result, you should see in your console:
 ```
+Fitting 5 folds for each of 1 candidates, totalling 5 fits
+[CV 4/5] END C=0.28881766539144715, gamma=0.8145222883402798, kernel=sigmoid;, score=0.988 total time=   0.0s
+[CV 1/5] END C=0.28881766539144715, gamma=0.8145222883402798, kernel=sigmoid;, score=0.975 total time=   0.0s
+[CV 3/5] END C=0.28881766539144715, gamma=0.8145222883402798, kernel=sigmoid;, score=0.988 total time=   0.0s
+[CV 2/5] END C=0.28881766539144715, gamma=0.8145222883402798, kernel=sigmoid;, score=1.000 total time=   0.0s
+[CV 5/5] END C=0.28881766539144715, gamma=0.8145222883402798, kernel=sigmoid;, score=0.975 total time=   0.0s
+Fitting 5 folds for each of 1 candidates, totalling 5 fits
+[CV 1/5] END C=105.76211650904162, gamma=3.413981076557398, kernel=poly;, score=1.000 total time=   0.0s
+[CV 2/5] END C=105.76211650904162, gamma=3.413981076557398, kernel=poly;, score=1.000 total time=   0.0s
+[CV 4/5] END C=105.76211650904162, gamma=3.413981076557398, kernel=poly;, score=1.000 total time=   0.0s
+[CV 3/5] END C=105.76211650904162, gamma=3.413981076557398, kernel=poly;, score=1.000 total time=   0.0s
+[CV 5/5] END C=105.76211650904162, gamma=3.413981076557398, kernel=poly;, score=0.988 total time=   0.0s
+...
+...
+...
+Fitting 5 folds for each of 1 candidates, totalling 5 fits
+[CV 1/5] END C=542.8146138331425, gamma=0.018850745969253083, kernel=sigmoid;, score=0.988 total time=   0.0s
+[CV 2/5] END C=542.8146138331425, gamma=0.018850745969253083, kernel=sigmoid;, score=1.000 total time=   0.0s
+[CV 3/5] END C=542.8146138331425, gamma=0.018850745969253083, kernel=sigmoid;, score=0.988 total time=   0.0s
+[CV 4/5] END C=542.8146138331425, gamma=0.018850745969253083, kernel=sigmoid;, score=1.000 total time=   0.0s
+[CV 5/5] END C=542.8146138331425, gamma=0.018850745969253083, kernel=sigmoid;, score=0.988 total time=   0.0s
+Bayesian Optimization processed in 61.32900285720825 seconds !
+Best parameters: OrderedDict([('C', 68.82665659460292), ('gamma', 0.001), ('kernel', 'linear')])
+Cross-validation scores: [1. 1. 1. 1. 1.]
+Mean cross-validation score: 1.0
+Optimized Accuracy: 1.0
+Optimized Classification Report:
+              precision    recall  f1-score   support
 
-and then the features:
-```python
-# We pre-treat the features before using them
+           0       1.00      1.00      1.00        51
+           1       1.00      1.00      1.00        49
 
-def preprocess_data(X):
-    X = X.copy()
-    for col in X.select_dtypes(include=['object']).columns:
-        X[col] = X[col].fillna('missing')
-        X[col] = LabelEncoder().fit_transform(X[col])
-    for col in X.select_dtypes(include=['float64', 'int64']).columns:
-        X[col] = X[col].fillna(X[col].median())
-    return X
+    accuracy                           1.00       100
+   macro avg       1.00      1.00      1.00       100
+weighted avg       1.00      1.00      1.00       100
 
-X_drug_preprocessed = preprocess_data(X_drug)
-X_cancer_preprocessed = preprocess_data(X_cancer)
-```
-
-### 3. Measure the possible correlations
-
-The data being pre-processed, we can now start the measure of possible correlations between the features and the corresponding targets. To do this task, we first create new features that are based on combinations between the pre-existing features:
-
-```python
-# In order to visualize how the features can correlate well with the target, 
-# we create interactions between the features and then we apply non-linear
-# tranformations
-from sklearn.preprocessing import PolynomialFeatures
-
-def create_features(X):
-    poly = PolynomialFeatures(degree=4, interaction_only=False, include_bias=False)
-    X_poly = poly.fit_transform(X)
-    return pd.DataFrame(X_poly, columns=poly.get_feature_names_out(X.columns))
-
-X_drug_enhanced = create_features(X_drug_preprocessed)
-X_cancer_enhanced = create_features(X_cancer_preprocessed)
+Optimized Confusion Matrix:
 ```
 
-Importantly, here we decided to use "degree=4" in the "PolynomialFeatures" function. This is purely an empirical choice and the user is free to use either less complex (degree=3) or more complex (degree=5) combinations between the features.   
+And  a picture of the confusion matrix, which should show you a perfect match between the predictions and the references ! 
 
-Once the new features are created and stored in "X_drug_enhanced" and "X_cancer_enhanced", we can use the Pearson correlation method to evaluate the possible correlations between these new features and the corresponding targets:   
-```python
-# Once the new correlated features are created, we can calculate the correlation
-# using the Pearson Correlation method 
-from scipy.stats import pearsonr
+### 3. Save the model and apply it on external data
 
-def calculate_correlations(X, y):
-    correlations = {}
-    for col in X.columns:
-        corr, _ = pearsonr(X[col], y)
-        correlations[col] = abs(corr)
-    return correlations
-
-correlations_drug_enhanced = calculate_correlations(X_drug_enhanced, y_drug)
+The model and the encoder (needed in the preprocessing of the data) are automatically saved in two external file, named [svm_model.joblib](svm_model.joblib) and [label_encoder_anemia.joblib](label_encoder_anemia.joblib). The aim now is to be able to use our model to check if our value is well trained without any extrapolation (as it could be suggested with such a nice score ...). To do that, we have a script labeled [2-Test-the-Model.py](2-Test-the-Model.py) that we can launch in our terminal:
+```
+python 2-Test-the-Model.py
 ```
 
-### 4. Interpret the results
+As a result, you should observe this in your terminal:
 
-Finally we can print the results:
-```python
-print("Correlations with the target -> drug200.csv:")
-print(sorted(correlations_drug_enhanced.items(), key=lambda item: item[1], reverse=True)[:5])  # Print only the 5 best correlations
-
-correlations_cancer_enhanced = calculate_correlations(X_cancer_enhanced, y_cancer)
-print("Correlations with the target -> dataset.csv:")
-print(sorted(correlations_cancer_enhanced.items(), key=lambda item: item[1], reverse=True)[:5]) # Print only the 5 best correlations
+```
+   Number Sex  %Red Pixel  %Green pixel  %Blue pixel        Hb Anaemic
+0       1   M   43.264176     30.838924    25.899587  6.297293     Yes
+1       2   F   43.144832     30.171404    26.692997  8.608315     Yes
+2       3   F   46.506491     27.430905    26.051133  9.713010     Yes
+3       4   F   44.963982     30.519205    24.499161  4.809385     Yes
+4       5  M    45.069466     31.089378    23.853518  8.995228     Yes
+Accuracy on the new data: 1.0
+Predictions:
+[1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+ 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0]
 ```
 
-and we should observe this on our screen:
+Finally, we can see a perfect prediction, meaning that:
+- First, the features are perfectly consistent with their respective target
+- Then, the hyperparameters are well tuned
+- And finally, no extrapolations are observed, meaning that our model can be used safely !
+
+As an opening, if there is doubt in certain prediction, the option "probability=True" can be used to evaluate its uncertainty. To do that, you can change these lines in the code [2-Test-the-Model.py](2-Test-the-Model.py):
 ```
-Correlations with the target -> drug200.csv:
-[('Na_to_K', 0.5891198660590571), ('Na_to_K^2', 0.5293393240544266), ('Age Na_to_K^2', 0.47156637415498887), ('BP Na_to_K', 0.46774484303852415), ('Na_to_K^3', 0.45736262390586513)]
-Correlations with the target -> dataset.csv:
-[('AGE^2 CHRONIC_DISEASE WHEEZING', 0.05834562878524951), ('AGE PEER_PRESSURE WHEEZING CHEST_PAIN', 0.056746749185962), ('AGE CHRONIC_DISEASE WHEEZING CHEST_PAIN', 0.056429262998627674), ('AGE PEER_PRESSURE WHEEZING ALCOHOL_CONSUMING', 0.05616977449562988), ('AGE WHEEZING^2 CHEST_PAIN', 0.05579777889721853)]
+> y_pred_new = best_model.predict(X_new_best_features)
+< y_pred_proba = best_model.predict_proba(X_new_best_features)
+< import numpy as np
+< y_pred_new = np.argmax(y_pred_new, axis=1)
 ```
 
-***How to interpret these results ?***
+and 
 
-The results here show the five best correlations for each of the databases. The coefficient is encompassed between -1 and 1, with 0 meaning that no correlations can be found. More information about this method can be found here: https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.pearsonr.html
+```
+< print(f"Probability: {y_pred_proba[0]}")
+```
 
-The main remark here is that the features present in drug200.csv show good correlations with their corresponding targets, with the features "Na_to_K", "Age" and "BP" being the most prominent ones. It thus explains why building classification models with these data was feasible in our previous project.   
-
-However, the correlations for features present in lung_cancer.csv show very bad correlations, with the maximum being less than 0.06. It demonstrates that if we try to build an ML model on these data, the prediction would be random as the model will not be able to learn based on these features.   
-
-***What do do next ?***
-
-With these results, the owners of the database [lung_cancer.csv](databases/lung_cancer.csv) should revised their features and create new more relevant features that would be more suitable for next generation of ML-based models in the future. Furthermore, this simple but efficient approach is crucial to predict the potential efficiency of any ML model which would be trained on data. 
-
-## Code and jupyter notebook available
-
-The full code is available here: [data_consistency.py](data_consistency.py).   
-
-The jupyter notebook released on Kaggle is available here: https://www.kaggle.com/code/celerse/data-consistency
-
-If you have any comments, remarks, or questions, do not hesitate to leave a comment or to contact me directly. I would be happy to discuss it directly with you !
+These slitghly modifications will give you access to the probability of the prediction  !
