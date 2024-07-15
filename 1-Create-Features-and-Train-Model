@@ -14,7 +14,7 @@ import seaborn as sns
 import joblib
 from scipy.stats import pearsonr
 
-anemia_data_path = "d_output.csv"
+anemia_data_path = "Databases/d_output.csv"
 anemia_data = pd.read_csv(anemia_data_path)
 
 # We check the data and separate the features from the target
@@ -51,7 +51,6 @@ def create_features(X, combination, feature_names):
     X_poly = poly.fit_transform(X)
     return pd.DataFrame(X_poly, columns=poly.get_feature_names_out(feature_names))
 
-# => As we have only 5 features here, we can create all the possible combination of features easily
 store_new_features = []
 for i in range(5):
     X_features_enhanced = create_features(X_features_scaled, i+1, X_features_preprocessed.columns)
